@@ -17,7 +17,7 @@ devtools::install_github('common2016/TBHB')
 ConvertRatio(year = 'yr',mon = 'mon',value.name = 'cumValue',data = profit,to = 'TB')
 # 转成环比
 ConvertRatio(year = 'yr',mon = 'mon',value.name = 'cumValue',data = profit,to = 'HB')
-# 转成顶级比
+# 转成定基比
 ConvertRatio(year = 'yr',mon = 'mon',value.name = 'cumValue',data = profit,to = 'DJB',
             BaseTime = c(2012,5))
 ```
