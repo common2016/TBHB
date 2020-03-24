@@ -75,7 +75,7 @@ ConvertRatio <- function(year = 'yr', mon = 'mon', value.name = 'value',
     }
     Tradata <- reshape2::melt(Tradata, id.vars = year)
     # 重新排序
-    paste('Tradata <- dplyr::arrange(Tradata,',year,',variable)',sep = '')
+    eval(parse(text = paste('Tradata <- dplyr::arrange(Tradata,',year,',variable)',sep = '')))
     names(Tradata) <- c(year,mon,paste(value.name,to,sep = ''))
   }else if (to %in% 'HB'){
     med[,paste(value.name,to,sep = '')] <-
