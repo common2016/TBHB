@@ -1,0 +1,18 @@
+Package: TBHB
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Pu",
+           family = "Chen",
+           role = c("aut", "cre"),
+           email = "chenyangx@ecjtu.edu.cn",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: What the package does (one paragraph).
+License: GPL-2
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    reshape2,
+    dplyr,
+    magrittr
+RoxygenNote: 7.0.2
