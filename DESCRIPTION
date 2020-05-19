@@ -1,13 +1,14 @@
 Package: TBHB
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Convert Ratios
+Version: 0.0.2
 Authors@R: 
     person(given = "Pu",
            family = "Chen",
            role = c("aut", "cre"),
            email = "chenyangx@ecjtu.edu.cn",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+Description: Translation among year-on-year ratios, chain relative ratios and
+  fixed base ratios.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -15,4 +16,4 @@ Imports:
     reshape2,
     dplyr,
     magrittr
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0

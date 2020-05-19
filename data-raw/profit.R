@@ -10,3 +10,9 @@ profit$mon <- format(profit$date,'%m') %>% as.numeric()
 
 profit[profit$mon == 2,'value'] <- profit[profit$mon == 2,'cumValue']
 # usethis::use_data(profit, overwrite = T)
+
+devtools::load_all()
+profit$HB <- ConvertRatio(data = profit,to = 'HB') %>% .[,'valueHB']
+profit$DJB <- ConvertRatio(data = profit,from = 'HB', to = 'DJB', value.name = 'HB') %>% .[,'DJB']
+profit$DJB <- ConvertRatio(data = profit,from = 'HB', to = 'TB', value.name = 'HB') %>% .[,'DJB']
+profit <- na.omit(profit)

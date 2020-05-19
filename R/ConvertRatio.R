@@ -7,6 +7,8 @@
 #'   which are translated to year-on-year ratio, chain relative ratio or
 #'   fixed base ratio.
 #' @param data a data.frame which include the year, mon and value.name columns at least.
+#' @param from a charactor which represents the type of original data, it only includes
+#'   'level'and 'HB'. 'HB' data look likes such as 0.16, not 1.16.
 #' @param to a charactor which represents a translated type. 'TB' means
 #'   a year-on-year ratio, 'HB' means a chain relative ratio, and 'DJB' means
 #'   a fixed base ratio.
@@ -63,29 +65,52 @@
 #' @export
 
 ConvertRatio <- function(year = 'yr', mon = 'mon', value.name = 'value',
-                         data, to = 'DJB', BaseTime = c(2013,6)){
+                         data,from = 'level', to = 'DJB', BaseTime = c(2013,6)){
   med <- data[,c(year,mon,value.name)]
-  if (to %in% 'TB'){
-    eval(parse(text = paste('formula <-', year,'~', mon,sep = '')))
-    med <- reshape2::dcast(med, formula = formula, value.var = value.name)
-    Tradata <- med
-    Tradata[1,-1] <- NA
-    for (i in 2:nrow(med)) {
-      Tradata[i,-1] <- (med[i,-1] - med[i-1,-1])/med[i-1,-1]
+  if (from %in% 'level'){
+    if (to %in% 'TB'){
+      eval(parse(text = paste('formula <-', year,'~', mon,sep = '')))
+      med <- reshape2::dcast(med, formula = formula, value.var = value.name)
+      Tradata <- med
+      Tradata[1,-1] <- NA
+      for (i in 2:nrow(med)) {
+        Tradata[i,-1] <- (med[i,-1] - med[i-1,-1])/med[i-1,-1]
+      }
+      Tradata <- reshape2::melt(Tradata, id.vars = year)
+      # 重新排序
+      eval(parse(text = paste('Tradata <- dplyr::arrange(Tradata,',year,',variable)',sep = '')))
+      names(Tradata) <- c(year,mon,paste(value.name,to,sep = ''))
+    }else if (to %in% 'HB'){
+      med[,paste(value.name,to,sep = '')] <-
+        (med[,value.name] - dplyr::lag(med[,value.name]))/dplyr::lag(med[,value.name])
+      Tradata <- med[,c(year,mon,paste(value.name,to,sep = ''))]
+    }else if (to %in% 'DJB'){
+      med[,paste(value.name,to,sep = '')] <-
+        (med[,value.name] - med[med[,year] == BaseTime[1] & med[,mon] == BaseTime[2],value.name])/
+        med[med[,year] == BaseTime[1] & med[,mon] == BaseTime[2],value.name]
+      Tradata <- med[,c(year,mon,paste(value.name,to,sep = ''))]
     }
-    Tradata <- reshape2::melt(Tradata, id.vars = year)
-    # 重新排序
-    eval(parse(text = paste('Tradata <- dplyr::arrange(Tradata,',year,',variable)',sep = '')))
-    names(Tradata) <- c(year,mon,paste(value.name,to,sep = ''))
-  }else if (to %in% 'HB'){
-    med[,paste(value.name,to,sep = '')] <-
-      (med[,value.name] - dplyr::lag(med[,value.name]))/dplyr::lag(med[,value.name])
-    Tradata <- med[,c(year,mon,paste(value.name,to,sep = ''))]
-  }else if (to %in% 'DJB'){
-    med[,paste(value.name,to,sep = '')] <-
-      (med[,value.name] - med[med[,year] == BaseTime[1] & med[,mon] == BaseTime[2],value.name])/
-      med[med[,year] == BaseTime[1] & med[,mon] == BaseTime[2],value.name]
-    Tradata <- med[,c(year,mon,paste(value.name,to,sep = ''))]
+  }else if (from %in% 'HB'){
+    # 先转成DJB
+    med$HB <- 1 + med$HB
+    med[,'DJB'] <- NA
+    med[1,'DJB'] <- 1
+    for (i in 2:nrow(med)) {
+      med[i,'DJB'] <- med[i,'HB'] * med[i-1,'DJB']
+    }
+    if (to %in% 'DJB'){
+      med$DJB <- med$DJB/med$DJB[med$yr == BaseTime[1] & med$mon == BaseTime[2]]
+      Tradata <- med[,c('yr','mon','DJB')]
+    } else if (to %in% 'TB'){
+      med <- reshape2::dcast(med,yr ~ mon, value.var = 'DJB')
+      for (i in seq(nrow(med),2,-1)) {
+        med[i,-1] <- (med[i,-1] - med[i-1,-1])/med[i-1,-1]
+      }
+      med[1,-1] <- NA
+      med <- reshape2::melt(med, id.vars = 'yr')
+      Tradata <- dplyr::rename(med, mon = variable, TB = value) %>%
+        dplyr::arrange(yr,mon)
+    }
   }
   return(Tradata)
 }

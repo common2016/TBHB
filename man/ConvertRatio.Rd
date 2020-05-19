@@ -9,6 +9,7 @@ ConvertRatio(
   mon = "mon",
   value.name = "value",
   data,
+  from = "level",
   to = "DJB",
   BaseTime = c(2013, 6)
 )
@@ -23,6 +24,9 @@ which are translated to year-on-year ratio, chain relative ratio or
 fixed base ratio.}
 
 \item{data}{a data.frame which include the year, mon and value.name columns at least.}
+
+\item{from}{a charactor which represents the type of original data, it only includes
+'level'and 'HB'. 'HB' data look likes such as 0.16, not 1.16.}
 
 \item{to}{a charactor which represents a translated type. 'TB' means
 a year-on-year ratio, 'HB' means a chain relative ratio, and 'DJB' means

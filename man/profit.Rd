@@ -4,7 +4,8 @@
 \name{profit}
 \alias{profit}
 \title{total profit of industrial enterprises in China}
-\format{A data frame with 88 rows and 7 variables:
+\format{
+A data frame with 88 rows and 7 variables:
 \describe{
 \item{date}{date}
 \item{cumValue}{accumalative total profit, in current price RMB}
@@ -13,7 +14,8 @@
 \item{TB}{year-on-year ratio for total profit for the month}
 \item{yr}{year}
 \item{mon}{month}
-}}
+}
+}
 \source{
 Wind Database
 }
